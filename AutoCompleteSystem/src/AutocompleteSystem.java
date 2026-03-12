@@ -1,67 +1,67 @@
 import java.util.*;
 
 /**
- * UseCase1GoogleAutocomplete
- * Simulates Google-like search autocomplete using HashMap and prefix matching.
+ * UseCase3IDEAutocomplete
+ * Simulates IDE code completion suggestions (like IntelliJ / VS Code).
  */
 
-public class AutocompleteSystem{
+public class AutocompleteSystem {
 
-    // query -> frequency
-    private HashMap<String, Integer> queryFrequency = new HashMap<>();
+    // code keyword -> frequency
+    private HashMap<String, Integer> keywordFrequency = new HashMap<>();
 
-    // add or update search query
-    public void updateFrequency(String query) {
-        queryFrequency.put(query, queryFrequency.getOrDefault(query, 0) + 1);
+    // update keyword usage frequency
+    public void updateFrequency(String keyword) {
+        keywordFrequency.put(keyword,
+                keywordFrequency.getOrDefault(keyword, 0) + 1);
     }
 
-    // return top 10 suggestions for a prefix
-    public List<String> search(String prefix) {
+    // return top 10 suggestions for prefix
+    public List<String> suggest(String prefix) {
 
         PriorityQueue<Map.Entry<String, Integer>> pq =
                 new PriorityQueue<>((a, b) -> b.getValue() - a.getValue());
 
-        for (Map.Entry<String, Integer> entry : queryFrequency.entrySet()) {
+        for (Map.Entry<String, Integer> entry : keywordFrequency.entrySet()) {
             if (entry.getKey().startsWith(prefix)) {
                 pq.add(entry);
             }
         }
 
-        List<String> results = new ArrayList<>();
+        List<String> suggestions = new ArrayList<>();
         int count = 0;
 
         while (!pq.isEmpty() && count < 10) {
-            Map.Entry<String, Integer> e = pq.poll();
-            results.add(e.getKey() + " (" + e.getValue() + " searches)");
+            Map.Entry<String, Integer> entry = pq.poll();
+            suggestions.add(entry.getKey() + " (" + entry.getValue() + " uses)");
             count++;
         }
 
-        return results;
+        return suggestions;
     }
 
     public static void main(String[] args) {
 
-        AutocompleteSystem autocomplete = new  AutocompleteSystem();
+        AutocompleteSystem  autocomplete = new AutocompleteSystem();
 
-        // Simulated previous search queries
-        autocomplete.updateFrequency("java tutorial");
-        autocomplete.updateFrequency("javascript");
-        autocomplete.updateFrequency("java download");
-        autocomplete.updateFrequency("java tutorial");
-        autocomplete.updateFrequency("java 21 features");
-        autocomplete.updateFrequency("java 21 features");
-        autocomplete.updateFrequency("java vs python");
-        autocomplete.updateFrequency("javascript tutorial");
+        // simulated IDE keyword usage
+        autocomplete.updateFrequency("System.out.println");
+        autocomplete.updateFrequency("System.out.print");
+        autocomplete.updateFrequency("System.out.println");
+        autocomplete.updateFrequency("Scanner");
+        autocomplete.updateFrequency("String");
+        autocomplete.updateFrequency("StringBuilder");
+        autocomplete.updateFrequency("System.exit");
 
-        // user types prefix
-        String prefix = "jav";
+        String prefix = "Sys";
 
-        List<String> suggestions = autocomplete.search(prefix);
+        List<String> results = autocomplete.suggest(prefix);
 
-        System.out.println("Search suggestions for \"" + prefix + "\":");
+        System.out.println("IDE Code Suggestions for \"" + prefix + "\":");
 
         int rank = 1;
-        for (String s : suggestions) {
+
+        for (String s : results) {
             System.out.println(rank + ". " + s);
             rank++;
         }
